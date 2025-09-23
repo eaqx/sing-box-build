@@ -1,0 +1,55 @@
+name: Build and Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version'
+        required: true
+
+jobs:
+  build :
+    name: Build binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: freebsd
+            arch: amd64
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.25.1
+      - name: Get version
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+      - name: Clone source code
+        run: |
+          git clone --branch v${VERSION} https://github.com/SagerNet/sing-box.git
+      - name: Set build tags
+        run: |
+          TAGS='with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale'
+          echo "BUILD_TAGS=${TAGS}" >> "${GITHUB_ENV}"
+      - name: Build
+        run: |
+          cd sing-box
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box -tags "${BUILD_TAGS}" \
+          -ldflags "-s -buildid= -X github.com/sagernet/sing-box/constant.Version=${VERSION}" \
+          ./cmd/sing-box
+        env:
+          CGO_ENABLED: "0"
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+      - name: Package
+        run: |
+          mkdir -p output/sing-box-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}
+          mv sing-box/dist/sing-box output/sing-box-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}
+          cp sing-box/LICENSE output/sing-box-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.os }}_${{ matrix.arch }}
+          path: output/*
