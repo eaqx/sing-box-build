@@ -1,4 +1,4 @@
-name: Build and Upload
+name: Build
 
 on:
   workflow_dispatch:
@@ -17,20 +17,17 @@ jobs:
           - os: freebsd
             arch: amd64
     steps:
-      - name: Get version
-        run: |
-          VERSION=${{ github.event.inputs.version }}
-          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
-      - name: Clone source code
-        run: |
-          git clone --branch v${VERSION} https://github.com/SagerNet/sing-box.git
-      - name: Copy go.sum
-        run: |
-          cp sing-box/go.sum .
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: 1.25.1
+      - name: Get version
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+      - name: Clone source
+        run: |
+          git clone --branch v${VERSION} https://github.com/SagerNet/sing-box.git
       - name: Set build tags
         run: |
           TAGS='with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale'
