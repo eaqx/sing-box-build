@@ -24,6 +24,9 @@ jobs:
       - name: Clone source code
         run: |
           git clone --branch v${VERSION} https://github.com/SagerNet/sing-box.git
+      - name: Copy go.sum
+        run: |
+          cp sing-box/go.sum .
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
