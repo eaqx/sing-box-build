@@ -17,10 +17,6 @@ jobs:
           - os: freebsd
             arch: amd64
     steps:
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.25.1
       - name: Get version
         run: |
           VERSION=${{ github.event.inputs.version }}
@@ -28,6 +24,11 @@ jobs:
       - name: Clone source
         run: |
           git clone --branch v${VERSION} https://github.com/SagerNet/sing-box.git
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.25.1
+          go-version-file: sing-box/go.mod
       - name: Set build tags
         run: |
           TAGS='with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale'
