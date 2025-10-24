@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - { os: openbsd, arch: arm64 }
+          - { os: freebsd, arch: amd64 }
     steps:
       - name: Checkout
         uses: actions/checkout@v5
