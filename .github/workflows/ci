@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: setup vm and run test
+    steps:
+    - name: test in freebsd
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+            pkg install -y bash
+            pkg install -y wget
+        run: |
+          pwd
+    - name: test in openbsd
+      uses: vmactions/openbsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+            pkg install -y bash
+            pkg install -y wget
+        run: |
+          pwd
