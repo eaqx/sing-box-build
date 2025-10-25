@@ -6,9 +6,9 @@ on:
       - '*'
 
 jobs:
-  test:
+  test-freebsd:
     runs-on: ubuntu-latest
-    name: setup vm and run test
+    name: setup freebsd vm and run test
     steps:
     - name: test in freebsd
       uses: vmactions/freebsd-vm@v1
@@ -19,6 +19,10 @@ jobs:
             pkg install -y wget
         run: |
           pwd
+  test-openbsd:
+    runs-on: ubuntu-latest
+    name: setup openbsd vm and run test
+    steps:
     - name: test in openbsd
       uses: vmactions/openbsd-vm@v1
       with:
