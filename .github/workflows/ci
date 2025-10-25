@@ -24,7 +24,7 @@ jobs:
       with:
         usesh: true
         prepare: |
-            pkg install -y bash
-            pkg install -y wget
+            pkg_add bash
+            pkg_add wget
         run: |
           pwd
