@@ -19,3 +19,12 @@ jobs:
             pkg install -y wget
         run: |
           pwd
+    - name: test in openbsd
+      uses: vmactions/openbsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+            pkg_add bash
+            pkg_add wget
+        run: |
+          pwd
